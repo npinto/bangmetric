@@ -2,19 +2,20 @@
 
 import numpy as np
 from pytest import raises
+
 from bangmetric import average_precision
 
 # XXX: test recall()
 # XXX: test precision()
 
-def test_length():
+def test_error_length():
     # should fail because y_pred and y_true don't have the same dimension
     y_pred = np.array([0.1, 0.2, 0.3])
     y_true = np.array([1., -1.])
     raises(AssertionError,
            average_precision, y_true, y_pred)
 
-def test_fail1():
+def test_error_integration():
     # should fail because "dummy" is not a supported method
     # of integration
     y_pred = np.array([0.87, 0.21, 0.35])
