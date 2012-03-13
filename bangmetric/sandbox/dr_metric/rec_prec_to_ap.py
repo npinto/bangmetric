@@ -1,16 +1,10 @@
-#!/usr/bin/env python
-
-"""
-Computes the Average Precision (AP) from the recall and
-precision arrays.
-"""
+"""Computes the Average Precision (AP) from the recall and precision arrays."""
 
 import numpy as np
 
 
 def average_precision(rec, prec, method='trapz'):
-    """
-    Computes the Average Precision (AP) from the recall and precision
+    """Computes the Average Precision (AP) from the recall and precision
     arrays. Different 'integration' methods can be used.
 
     Parameters

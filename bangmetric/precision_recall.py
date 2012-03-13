@@ -22,7 +22,9 @@ def precision(y_true, y_pred):
     Parameters
     ----------
     y_true: array, shape = [n_samples]
-        True values.
+        True values, interpreted as strictly positive or not
+        (i.e. converted to binary).
+        Could be in {-1, +1} or {0, 1} or {False, True}.
 
     y_pred: array, shape = [n_samples]
         Predicted values.
@@ -41,7 +43,7 @@ def precision(y_true, y_pred):
     idx = (-y_pred).argsort()
 
     tp = (y_true[idx] > 0).cumsum()
-    fp = (y_true[idx] < 0).cumsum()
+    fp = (y_true[idx] <= 0).cumsum()
 
     prec = tp / (fp + tp)
 
@@ -54,7 +56,9 @@ def recall(y_true, y_pred):
     Parameters
     ----------
     y_true: array, shape = [n_samples]
-        True values.
+        True values, interpreted as strictly positive or not
+        (i.e. converted to binary).
+        Could be in {-1, +1} or {0, 1} or {False, True}.
 
     y_pred: array, shape = [n_samples]
         Predicted values.
@@ -74,7 +78,11 @@ def recall(y_true, y_pred):
 
     tp = (y_true[idx] > 0).cumsum()
 
-    rec = tp / (y_true > 0).sum()
+    y_true_n_pos = (y_true > 0).sum()
+    if y_true_n_pos == 0:
+        rec = np.zeros(tp.shape, dtype=DTYPE)
+    else:
+        rec = tp / y_true_n_pos
 
     return rec
 
@@ -86,7 +94,9 @@ def average_precision(y_true, y_pred, integration='trapz'):
     Parameters
     ----------
     y_true: array, shape = [n_samples]
-        True values.
+        True values, interpreted as strictly positive or not
+        (i.e. converted to binary).
+        Could be in {-1, +1} or {0, 1} or {False, True}.
 
     y_pred: array, shape = [n_samples]
         Predicted values.
