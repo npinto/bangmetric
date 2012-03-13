@@ -24,9 +24,9 @@ def accuracy(y_true, y_pred, balanced=False):
         Predicted values, interpreted as strictly positive or not
         (i.e. converted to binary).
 
-    balanced: bool, optional
+    balanced: bool, optional (default=False)
         Returns the balanced accuracy (equal weight for positive and
-        negative predictions).
+        negative values).
 
     Returns
     -------
@@ -48,7 +48,7 @@ def accuracy(y_true, y_pred, balanced=False):
         neg = ~pos
         pos_acc = (y_true[pos] == y_pred[pos]).mean()
         neg_acc = (y_true[neg] == y_pred[neg]).mean()
-        acc = (pos_acc + neg_acc) / 2.0
+        acc = (pos_acc + neg_acc) / 2.
     else:
         acc = (y_true == y_pred).mean()
 
