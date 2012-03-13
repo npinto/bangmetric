@@ -101,7 +101,7 @@ def average_precision(y_true, y_pred, integration='trapz'):
     y_pred: array, shape = [n_samples]
         Predicted values.
 
-    integration: str
+    integration: str, optional
         Type of 'integration' method used to compute the average precision:
             'trapz': trapezoidal rule (default)
             'voc2010': see http://goo.gl/glxdO and http://goo.gl/ueXzr
@@ -110,7 +110,7 @@ def average_precision(y_true, y_pred, integration='trapz'):
     Returns
     -------
     ap: float
-        Average Precision
+        Average Precision.
     """
 
     assert len(y_true) == len(y_pred)
