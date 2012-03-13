@@ -13,10 +13,18 @@ def test_error_length():
 
 
 def test_basic():
-    y_pred = np.array([True, False, True, True, False])
-    y_true = np.array([True, True, False, True, False])
+    y_true = np.array([True, False, True, True, False])
+    y_pred = np.array([True, True, False, True, False])
     acc = accuracy(y_true, y_pred)
     reference = 3. / 5.
+    assert acc == reference
+
+
+def test_basic_balanced():
+    y_true = np.array([True, True, True, False, False])
+    y_pred = np.array([True, True, False, True, False])
+    acc = accuracy(y_true, y_pred, balanced=True)
+    reference = ((2. / 3.) + (1. / 2.)) / 2.
     assert acc == reference
 
 
@@ -24,7 +32,7 @@ def test_all_positives():
     y_true = np.ones((5), dtype=bool)
     y_pred = np.random.randn(y_true.size)
     y_pred -= y_pred.min()
-    y_pred += 1.0
+    y_pred += 1.
     acc = accuracy(y_true, y_pred)
     assert acc == 1.0
     acc = accuracy(y_pred, y_true)
