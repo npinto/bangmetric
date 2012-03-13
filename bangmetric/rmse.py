@@ -5,6 +5,9 @@
 #
 # License: BSD
 
+# TODO: rmse_coefficient (i.e. CV(RMSE))
+# see http://en.wikipedia.org/wiki/Root-mean-square_deviation
+
 __all__ = ['rmse']
 
 import numpy as np
@@ -13,7 +16,7 @@ from numpy import linalg as la
 DTYPE = np.float64
 
 
-def rmse(y_true, y_pred, balanced=False):
+def rmse(y_true, y_pred, balanced=False, normalized=False):
     """Computes the Root Mean Square Error (RMSE) between the predicted
     values `y_pred` and ground truth values `y_true`.
 
@@ -29,10 +32,18 @@ def rmse(y_true, y_pred, balanced=False):
         Returns the balanced accuracy (equal weight for positive and
         negative values).
 
+    normalize: bool, optional (default=False)
+        Returns the normalized RMSE, i.e. RMSE divided by the range of
+        observed values.
+
     Returns
     -------
     error: float
         RMSE.
+
+    References
+    ----------
+    http://en.wikipedia.org/wiki/Root-mean-square_deviation
     """
 
     # -- basic checks and conversion
@@ -43,6 +54,10 @@ def rmse(y_true, y_pred, balanced=False):
 
     y_pred = np.array(y_pred, dtype=DTYPE)
     assert y_pred.ndim == 1
+
+    # Note that we use la.norm as it is faster than element-wise
+    # operations and reductions in numpy when a fast blas library is
+    # available
 
     if balanced:
         pos = y_true > 0
@@ -55,5 +70,10 @@ def rmse(y_true, y_pred, balanced=False):
     else:
         error = la.norm(y_true - y_pred)
         error /= np.sqrt(y_true.size)
+
+    if normalized:
+        div = y_true.max() - y_true.min()
+        if div != 0:
+            error /= div
 
     return error
