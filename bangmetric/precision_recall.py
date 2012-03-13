@@ -35,11 +35,16 @@ def precision(y_true, y_pred):
         Precision array.
     """
 
+    # -- basic checks and conversion
     assert len(y_true) == len(y_pred)
 
     y_true = np.array(y_true, dtype=DTYPE)
-    y_pred = np.array(y_pred, dtype=DTYPE)
+    assert y_true.ndim == 1
 
+    y_pred = np.array(y_pred, dtype=DTYPE)
+    assert y_pred.ndim == 1
+
+    # -- actual computation
     idx = (-y_pred).argsort()
 
     tp = (y_true[idx] > 0).cumsum()
@@ -69,11 +74,16 @@ def recall(y_true, y_pred):
         Recall array.
     """
 
+    # -- basic checks and conversion
     assert len(y_true) == len(y_pred)
 
     y_true = np.array(y_true, dtype=DTYPE)
-    y_pred = np.array(y_pred, dtype=DTYPE)
+    assert y_true.ndim == 1
 
+    y_pred = np.array(y_pred, dtype=DTYPE)
+    assert y_pred.ndim == 1
+
+    # -- actual computation
     idx = (-y_pred).argsort()
 
     tp = (y_true[idx] > 0).cumsum()
@@ -113,12 +123,17 @@ def average_precision(y_true, y_pred, integration='trapz'):
         Average Precision.
     """
 
+    # -- basic checks and conversion
     assert len(y_true) == len(y_pred)
     assert integration in ['trapz', 'voc2010', 'voc2007']
 
     y_true = np.array(y_true, dtype=DTYPE)
-    y_pred = np.array(y_pred, dtype=DTYPE)
+    assert y_true.ndim == 1
 
+    y_pred = np.array(y_pred, dtype=DTYPE)
+    assert y_pred.ndim == 1
+
+    # -- actual computation
     rec = recall(y_true, y_pred)
     prec = precision(y_true, y_pred)
 

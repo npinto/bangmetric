@@ -17,7 +17,6 @@ def test_error_length():
 def test_basic():
     y_true = np.array([False, True, True, True, False, False, False, True])
     y_pred = np.array([0.491, -0.1, 0.64, 1.52, -0.23, -0.23, 1.579, 0.76])
-    print y_pred
     dp = dprime(y_true, y_pred)
     reference = 0.47387910220727386
     assert abs(dp - reference) < ATOL

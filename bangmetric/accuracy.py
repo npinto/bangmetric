@@ -38,7 +38,10 @@ def accuracy(y_true, y_pred, balanced=False):
 
     # -- "binarize" the arguments
     y_true = np.array(y_true) > 0
+    assert y_true.ndim == 1
+
     y_pred = np.array(y_pred) > 0
+    assert y_pred.ndim == 1
 
     if balanced:
         pos = y_true > 0

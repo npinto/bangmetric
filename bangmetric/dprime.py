@@ -34,8 +34,16 @@ def dprime(y_pred, y_true):
     http://en.wikipedia.org/wiki/D'
     """
 
+    # -- basic checks and conversion
     assert len(y_true) == len(y_pred)
 
+    y_true = np.array(y_true)
+    assert y_true.ndim == 1
+
+    y_pred = np.array(y_pred)
+    assert y_pred.ndim == 1
+
+    # -- actual computation
     pos = y_true > 0
     neg = ~pos
     pos_mean = y_pred[pos].mean()
