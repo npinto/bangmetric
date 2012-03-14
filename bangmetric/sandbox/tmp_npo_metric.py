@@ -55,19 +55,19 @@ def recall_from_boolean(preds, gt):
 
 def precision_from_boolean(preds, gt):
     """
-    **Description**                                             
+    **Description**
         computes the precision value of a prediction given a ground
-        truth baseline                                          
-    **Inputs**                                                  
-        preds: array of booleans                                
-            contains the predicted values                       
-        gt: array of booleans                                   
-            contains the ground truth baseline                  
-    **Output**                                                  
-        precision: float                                           
+        truth baseline
+    **Inputs**
+        preds: array of booleans
+            contains the predicted values
+        gt: array of booleans
+            contains the ground truth baseline
+    **Output**
+        precision: float
             global precision, i.e. the ratio between the number of true
             positives to the sum of true positives and false positive
-    **Reference**                                               
+    **Reference**
         http://en.wikipedia.org/wiki/Precision_and_recall
     """
     assert len(preds) == len(gt)
@@ -102,7 +102,7 @@ def average_precision(preds, gt, integration_type='trapz'):
     **References**
         Code converted from Pascal VOC 2007 devkit:
         http://pascallin.ecs.soton.ac.uk/challenges/VOC/voc2007/VOCdevkit_08-Jun-2007.tar
-        
+
         I believe the average precision code has changed in Pascal VOC 2010+, check it out:
         http://pascallin.ecs.soton.ac.uk/challenges/VOC/voc2010/VOCdevkit_08-May-2010.tar
     **Warning**

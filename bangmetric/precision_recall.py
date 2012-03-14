@@ -10,13 +10,14 @@ http://en.wikipedia.org/wiki/Precision_and_recall
 __all__ = ['precision', 'recall', 'average_precision']
 
 
+from warnings import warn as warning
 import numpy as np
 from scipy.integrate import trapz
 
 DTYPE = np.float64
 
 
-def precision(y_true, y_pred):
+def precision(y_true, y_pred, argsort_kind='quicksort'):
     """Computes the Precision values w.r.t. descending `y_pred` values.
 
     Parameters
@@ -29,6 +30,9 @@ def precision(y_true, y_pred):
     y_pred: array, shape = [n_samples]
         Predicted values.
 
+    argsort_kind: str
+        Sorting algorithm.
+
     Returns
     -------
     prec: array, shape = [n_samples]
@@ -40,17 +44,26 @@ def precision(y_true, y_pred):
     y_true = np.array(y_true, dtype=DTYPE)
     y_pred = np.array(y_pred, dtype=DTYPE)
 
-    idx = (-y_pred).argsort()
+    n_uniques = np.unique(y_pred)
+    if n_uniques.size == 1:
+        raise ValueError('Rank of predicted values is ill-defined'
+                         ' because all elements are equal')
+    elif n_uniques.size < y_pred.size:
+        warning('some predicted elements have exactly the same value.'
+                ' output will most probably depend on the sorting'
+                ' method used. Here "%s"' % argsort_kind)
 
-    tp = (y_true[idx] > 0).cumsum()
-    fp = (y_true[idx] <= 0).cumsum()
+    idx = (-y_pred).argsort(kind=argsort_kind)
+
+    tp = (y_true[idx] > 0).cumsum(dtype=DTYPE)
+    fp = (y_true[idx] <= 0).cumsum(dtype=DTYPE)
 
     prec = tp / (fp + tp)
 
     return prec
 
 
-def recall(y_true, y_pred):
+def recall(y_true, y_pred, argsort_kind='quicksort'):
     """Computes the Recall values w.r.t. descending `y_pred` values.
 
     Parameters
@@ -63,6 +76,9 @@ def recall(y_true, y_pred):
     y_pred: array, shape = [n_samples]
         Predicted values.
 
+    argsort_kind: str
+        Sorting algorithm.
+
     Returns
     -------
     rec: array, shape = [n_samples]
@@ -74,11 +90,20 @@ def recall(y_true, y_pred):
     y_true = np.array(y_true, dtype=DTYPE)
     y_pred = np.array(y_pred, dtype=DTYPE)
 
-    idx = (-y_pred).argsort()
+    n_uniques = np.unique(y_pred)
+    if n_uniques.size == 1:
+        raise ValueError('Rank of predicted values is ill-defined'
+                         ' because all elements are equal')
+    elif n_uniques.size < y_pred.size:
+        warning('some predicted elements have exactly the same value.'
+                ' output will most probably depend on the sorting'
+                ' method used. Here "%s"' % argsort_kind)
 
-    tp = (y_true[idx] > 0).cumsum()
+    idx = (-y_pred).argsort(kind=argsort_kind)
 
-    y_true_n_pos = (y_true > 0).sum()
+    tp = (y_true[idx] > 0).cumsum(dtype=DTYPE)
+
+    y_true_n_pos = (y_true > 0).sum(dtype=DTYPE)
     if y_true_n_pos == 0:
         rec = np.zeros(tp.shape, dtype=DTYPE)
     else:
@@ -87,7 +112,8 @@ def recall(y_true, y_pred):
     return rec
 
 
-def average_precision(y_true, y_pred, integration='trapz'):
+def average_precision(y_true, y_pred, integration='trapz',
+                      argsort_kind='quicksort'):
     """Computes the Average Precision (AP) from the recall and precision
     arrays. Different 'integration' methods can be used.
 
@@ -107,10 +133,19 @@ def average_precision(y_true, y_pred, integration='trapz'):
             'voc2010': see http://goo.gl/glxdO and http://goo.gl/ueXzr
             'voc2007': see http://goo.gl/E1YyY
 
+    argsort_kind: str
+        Sorting algorithm.
+
     Returns
     -------
     ap: float
         Average Precision
+
+    Note
+    ----
+    'voc2007' method is here only for legacy purposes. We do not recommend
+    its use since even simple trivial cases like a perfect match between
+    true values and predicted values do not lead to an average precision of 1.
     """
 
     assert len(y_true) == len(y_pred)
@@ -119,8 +154,17 @@ def average_precision(y_true, y_pred, integration='trapz'):
     y_true = np.array(y_true, dtype=DTYPE)
     y_pred = np.array(y_pred, dtype=DTYPE)
 
-    rec = recall(y_true, y_pred)
-    prec = precision(y_true, y_pred)
+    n_uniques = np.unique(y_pred)
+    if n_uniques.size == 1:
+        raise ValueError('Rank of predicted values is ill-defined'
+                         ' because all elements are equal')
+    elif n_uniques.size < y_pred.size:
+        warning('some predicted elements have exactly the same value.'
+                ' output will most probably depend on the sorting'
+                ' method used. Here "%s"' % argsort_kind, UserWarning)
+
+    rec = recall(y_true, y_pred, argsort_kind=argsort_kind)
+    prec = precision(y_true, y_pred, argsort_kind=argsort_kind)
 
     if integration == 'trapz':
         if rec[0] != 0.:
