@@ -3,6 +3,7 @@
 import warnings
 import numpy as np
 from pytest import raises
+
 from bangmetric import average_precision
 from bangmetric import precision
 from bangmetric import recall

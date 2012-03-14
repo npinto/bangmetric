@@ -39,10 +39,14 @@ def precision(y_true, y_pred, argsort_kind='quicksort'):
         Precision array.
     """
 
+    # -- basic checks and conversion
     assert len(y_true) == len(y_pred)
 
     y_true = np.array(y_true, dtype=DTYPE)
+    assert y_true.ndim == 1
+
     y_pred = np.array(y_pred, dtype=DTYPE)
+    assert y_pred.ndim == 1
 
     n_uniques = np.unique(y_pred)
     if n_uniques.size == 1:
@@ -53,6 +57,7 @@ def precision(y_true, y_pred, argsort_kind='quicksort'):
                 ' output will most probably depend on the sorting'
                 ' method used. Here "%s"' % argsort_kind)
 
+    # -- actual computation
     idx = (-y_pred).argsort(kind=argsort_kind)
 
     tp = (y_true[idx] > 0).cumsum(dtype=DTYPE)
@@ -85,10 +90,14 @@ def recall(y_true, y_pred, argsort_kind='quicksort'):
         Recall array.
     """
 
+    # -- basic checks and conversion
     assert len(y_true) == len(y_pred)
 
     y_true = np.array(y_true, dtype=DTYPE)
+    assert y_true.ndim == 1
+
     y_pred = np.array(y_pred, dtype=DTYPE)
+    assert y_pred.ndim == 1
 
     n_uniques = np.unique(y_pred)
     if n_uniques.size == 1:
@@ -99,6 +108,7 @@ def recall(y_true, y_pred, argsort_kind='quicksort'):
                 ' output will most probably depend on the sorting'
                 ' method used. Here "%s"' % argsort_kind)
 
+    # -- actual computation
     idx = (-y_pred).argsort(kind=argsort_kind)
 
     tp = (y_true[idx] > 0).cumsum(dtype=DTYPE)
@@ -127,7 +137,7 @@ def average_precision(y_true, y_pred, integration='trapz',
     y_pred: array, shape = [n_samples]
         Predicted values.
 
-    integration: str
+    integration: str, optional
         Type of 'integration' method used to compute the average precision:
             'trapz': trapezoidal rule (default)
             'voc2010': see http://goo.gl/glxdO and http://goo.gl/ueXzr
@@ -148,11 +158,15 @@ def average_precision(y_true, y_pred, integration='trapz',
     true values and predicted values do not lead to an average precision of 1.
     """
 
+    # -- basic checks and conversion
     assert len(y_true) == len(y_pred)
     assert integration in ['trapz', 'voc2010', 'voc2007']
 
     y_true = np.array(y_true, dtype=DTYPE)
+    assert y_true.ndim == 1
+
     y_pred = np.array(y_pred, dtype=DTYPE)
+    assert y_pred.ndim == 1
 
     n_uniques = np.unique(y_pred)
     if n_uniques.size == 1:
@@ -163,6 +177,7 @@ def average_precision(y_true, y_pred, integration='trapz',
                 ' output will most probably depend on the sorting'
                 ' method used. Here "%s"' % argsort_kind, UserWarning)
 
+    # -- actual computation
     rec = recall(y_true, y_pred, argsort_kind=argsort_kind)
     prec = precision(y_true, y_pred, argsort_kind=argsort_kind)
 
