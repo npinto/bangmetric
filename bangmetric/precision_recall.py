@@ -41,6 +41,8 @@ def precision(y_true, y_pred, argsort_kind='quicksort'):
 
     # -- basic checks and conversion
     assert len(y_true) == len(y_pred)
+    assert np.isfinite(y_true).all()
+    assert np.isfinite(y_pred).all()
 
     y_true = np.array(y_true, dtype=DTYPE)
     assert y_true.ndim == 1
@@ -92,6 +94,8 @@ def recall(y_true, y_pred, argsort_kind='quicksort'):
 
     # -- basic checks and conversion
     assert len(y_true) == len(y_pred)
+    assert np.isfinite(y_true).all()
+    assert np.isfinite(y_pred).all()
 
     y_true = np.array(y_true, dtype=DTYPE)
     assert y_true.ndim == 1
@@ -160,6 +164,8 @@ def average_precision(y_true, y_pred, integration='trapz',
 
     # -- basic checks and conversion
     assert len(y_true) == len(y_pred)
+    assert np.isfinite(y_true).all()
+    assert np.isfinite(y_pred).all()
     assert integration in ['trapz', 'voc2010', 'voc2007']
 
     y_true = np.array(y_true, dtype=DTYPE)

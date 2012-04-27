@@ -36,6 +36,8 @@ def dprime(y_pred, y_true):
 
     # -- basic checks and conversion
     assert len(y_true) == len(y_pred)
+    assert np.isfinite(y_true).all()
+    assert np.isfinite(y_pred).all()
 
     y_true = np.array(y_true)
     assert y_true.ndim == 1

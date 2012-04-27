@@ -48,6 +48,8 @@ def rmse(y_true, y_pred, balanced=False, normalized=False):
 
     # -- basic checks and conversion
     assert len(y_true) == len(y_pred)
+    assert np.isfinite(y_true).all()
+    assert np.isfinite(y_pred).all()
 
     y_true = np.array(y_true, dtype=DTYPE)
     assert y_true.ndim == 1

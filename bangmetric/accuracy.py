@@ -33,8 +33,9 @@ def accuracy(y_true, y_pred, balanced=False):
     acc: float
         Accuracy (zero-one score).
     """
-
     assert len(y_true) == len(y_pred)
+    assert np.isfinite(y_true).all()
+    assert np.isfinite(y_pred).all()
 
     # -- "binarize" the arguments
     y_true = np.array(y_true) > 0

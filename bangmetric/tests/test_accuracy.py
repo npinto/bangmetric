@@ -9,7 +9,7 @@ from bangmetric import accuracy
 def test_error_length():
     y_pred = np.array([False, True, True])
     y_true = np.array([True, False])
-    raises(AssertionError, accuracy, y_pred, y_true)
+    raises(AssertionError, accuracy, y_true, y_pred)
 
 
 def test_basic():
@@ -42,5 +42,14 @@ def test_all_positives():
 def test_all_negatives():
     y_true = np.zeros((5), dtype=bool)
     y_pred = ~y_true
-    acc = accuracy(y_pred, y_true)
+    acc = accuracy(y_true, y_pred)
     assert acc == 0.0
+
+
+def test_error_non_finite():
+    y_true = np.zeros((5), dtype=float)
+    y_pred = np.ones_like(y_true)
+    y_pred[0] = np.nan
+    raises(AssertionError, accuracy, y_true, y_pred)
+    y_pred[0] = np.inf
+    raises(AssertionError, accuracy, y_true, y_pred)

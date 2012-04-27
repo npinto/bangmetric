@@ -13,63 +13,63 @@ def test_incompatible_input_dimensions_ap():
     y_pred = np.array([0.1, 0.2, 0.3])
     y_true = np.array([1., -1.])
     raises(AssertionError,
-    average_precision, y_true, y_pred)
+           average_precision, y_true, y_pred)
 
 
 def test_incompatible_input_dimensions_precision():
     y_pred = np.array([0.1, 0.2, 0.3])
     y_true = np.array([1., -1.])
     raises(AssertionError,
-    precision, y_true, y_pred)
+           precision, y_true, y_pred)
 
 
 def test_incompatible_input_dimensions_recall():
     y_pred = np.array([0.1, 0.2, 0.3])
     y_true = np.array([1., -1.])
     raises(AssertionError,
-    recall, y_true, y_pred)
+           recall, y_true, y_pred)
 
 
 def test_wrong_integration_method():
     y_pred = np.array([0.87, 0.21, 0.35])
     y_true = np.array([1., -1., 1.])
     raises(AssertionError,
-    average_precision, y_true, y_pred, integration='dummy')
+           average_precision, y_true, y_pred, integration='dummy')
 
 
 def test_equal_predictions_error_precision():
     y_pred = np.array([0.35, 0.35, 0.35])
     y_true = np.array([1., -1., 1.])
     raises(ValueError,
-    precision, y_true, y_pred)
+           precision, y_true, y_pred)
 
 
 def test_equal_predictions_error_recall():
     y_pred = np.array([0.35, 0.35, 0.35])
     y_true = np.array([1., -1., 1.])
     raises(ValueError,
-    recall, y_true, y_pred)
+           recall, y_true, y_pred)
 
 
 def test_equal_predictions_error_trapz():
     y_pred = np.array([0.35, 0.35, 0.35])
     y_true = np.array([1., -1., 1.])
     raises(ValueError,
-    average_precision, y_true, y_pred, integration='trapz')
+           average_precision, y_true, y_pred, integration='trapz')
 
 
 def test_equal_predictions_error_voc2010():
     y_pred = np.array([0.42, 0.42, 0.42])
     y_true = np.array([1., -1., 1.])
     raises(ValueError,
-    average_precision, y_true, y_pred, integration='voc2010')
+           average_precision, y_true, y_pred, integration='voc2010')
 
 
 def test_equal_predictions_error_voc2007():
     y_pred = np.array([0.07, 0.07, 0.07])
     y_true = np.array([1., -1., 1.])
     raises(ValueError,
-    average_precision, y_true, y_pred, integration='voc2007')
+           average_precision, y_true, y_pred, integration='voc2007')
 
 
 def test_user_warning_precision():
@@ -184,3 +184,16 @@ def test_non_trivial_perfect_ap_voc2010():
     ap = average_precision(y_true, y_pred, integration='voc2010')
     reference = 1.
     assert abs(ap - reference) < 1e-6
+
+
+def test_error_non_finite():
+    y_true = np.array([1., 1., 0., 1.])
+    y_pred = np.array([0.25, 0.45, 0.60, 0.90])
+    y_pred[0] = np.nan
+    raises(AssertionError, precision, y_true, y_pred)
+    raises(AssertionError, recall, y_true, y_pred)
+    raises(AssertionError, average_precision, y_true, y_pred)
+    y_pred[0] = np.inf
+    raises(AssertionError, precision, y_true, y_pred)
+    raises(AssertionError, recall, y_true, y_pred)
+    raises(AssertionError, average_precision, y_true, y_pred)

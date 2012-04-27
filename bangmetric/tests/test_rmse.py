@@ -55,3 +55,13 @@ def test_basic_vs_numpy():
     err = rmse(y_true, y_pred)
     reference = np.sqrt(((y_true - y_pred) ** 2.).mean())
     assert abs(err - reference) < ATOL
+
+
+def test_error_non_finite():
+    rng = np.random.RandomState(42)
+    y_true = rng.randn(10)
+    y_pred = rng.randn(y_true.size)
+    y_pred[0] = np.nan
+    raises(AssertionError, rmse, y_true, y_pred)
+    y_pred[0] = np.inf
+    raises(AssertionError, rmse, y_true, y_pred)

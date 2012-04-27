@@ -42,3 +42,12 @@ def test_dprime_undefined():
 
     dp_neg = dprime(-y_true, -y_pred)
     assert dp_neg is None
+
+
+def test_error_non_finite():
+    y_true = np.zeros((5), dtype=float)
+    y_pred = np.ones_like(y_true)
+    y_pred[0] = np.nan
+    raises(AssertionError, dprime, y_true, y_pred)
+    y_pred[0] = np.inf
+    raises(AssertionError, dprime, y_true, y_pred)

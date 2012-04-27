@@ -56,3 +56,14 @@ def test_basic_vs_scipy():
     rho = spearman(y_true, y_pred)
     reference = stats.spearmanr(y_true, y_pred)[0]
     assert abs(rho - reference) < ATOL
+
+
+def test_error_non_finite():
+    y_true = np.zeros((5), dtype=float)
+    y_pred = np.ones_like(y_true)
+    y_pred[0] = np.nan
+    raises(AssertionError, pearson, y_true, y_pred)
+    raises(AssertionError, spearman, y_true, y_pred)
+    y_pred[0] = np.inf
+    raises(AssertionError, pearson, y_true, y_pred)
+    raises(AssertionError, spearman, y_true, y_pred)
