@@ -12,14 +12,14 @@ X = np.random.uniform(-1, 1, [100, 1])
 T = np.sign(np.cos(4 * np.pi * X))
 Ttrue = np.sign(np.cos(4 * np.pi * Xsupport))
 V = kanalysis(X, T)
-auc = V.sum()
+auc = V.mean()
 print 'kanalysis curve:', V
 print 'kanalysis AUC:', auc
 
 Xprime = np.cos(4 * np.pi * X)
 
 Vprime = kanalysis(Xprime, T)
-aucprime = Vprime.sum()
+aucprime = Vprime.mean()
 print 'kanalysis curve:', Vprime
 print 'kanalysis AUC:', aucprime
 
@@ -45,5 +45,4 @@ plt.title('Kernel Analysis curves')
 plt.xlabel('kPCA dimension')
 plt.ylabel('loss (lower is better)')
 
-#plt.draw()
 plt.show()
