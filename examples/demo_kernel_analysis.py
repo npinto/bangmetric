@@ -1,9 +1,12 @@
+"""Example of kernel analysis on a sinc() function dataset
+
+Authors: Charles Cadieu <cadieu@mit.edu>
+"""
 import numpy as np
+from matplotlib import pyplot as plt
+
 from bangmetric import kanalysis
 
-# ----------------------------------------------------
-# Example of execution on a sinc() function dataset
-# ----------------------------------------------------
 Xsupport = np.arange(-1., 1., .01)
 X = np.random.uniform(-1, 1, [100, 1])
 T = np.sign(np.cos(4 * np.pi * X))
@@ -20,7 +23,6 @@ aucprime = Vprime.sum()
 print 'kanalysis curve:', Vprime
 print 'kanalysis AUC:', aucprime
 
-from matplotlib import pyplot as plt
 plt.figure(1, figsize=(16, 8))
 plt.clf()
 plt.subplot(1, 2, 1)
@@ -43,5 +45,5 @@ plt.title('Kernel Analysis curves')
 plt.xlabel('kPCA dimension')
 plt.ylabel('loss (lower is better)')
 
-plt.draw()
+#plt.draw()
 plt.show()
