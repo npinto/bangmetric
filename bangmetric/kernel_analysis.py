@@ -158,9 +158,11 @@ def kanalysis_K(K, Y_true, n_components='all'):
     assert K.ndim == 2
     assert K.shape[0] == K.shape[1]
     assert np.isfinite(K).all()
+    K = K.copy()
 
     assert Y_true.ndim <= 2
     assert np.isfinite(Y_true).all()
+    Y_true = Y_true.copy()
     if Y_true.ndim == 1:
         Y_true = Y_true[:, newaxis]
 
