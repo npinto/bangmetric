@@ -181,6 +181,7 @@ def kanalysis_K(K, Y_true, n_components='all'):
         Y_center = Y_center / Y_std
 
     # Center the kernel
+    K = K.copy()
     K -= K.mean(axis=0)[newaxis, :]
     K -= K.mean(axis=1)[:, newaxis]
     K += K.mean()
