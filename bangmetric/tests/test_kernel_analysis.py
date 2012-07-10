@@ -58,15 +58,15 @@ def test_sinc():
     auc = ka.mean()
     assert abs(ka[1] - 0.97858424670806643) < EPSILON
     assert abs(ka[6] - 0.77621800324925161) < EPSILON
-    assert abs(auc - 0.17085682801203947) < EPSILON
+    assert abs(auc - 0.26515079212133352) < EPSILON
 
     X2 = np.cos(4*np.pi*X)
     ka2 = kanalysis(X2, Y_true, quantiles=QUANTILES)
     assert abs(ka2[0] - 1) < EPSILON
     auc2 = ka2.mean()
     assert abs(ka2[2] - 0.18664740171388722) < EPSILON
-    assert abs(ka2[8] - 0.068944842729630765) < EPSILON
-    assert abs(auc2 - 0.03687495724752006) < EPSILON
+    assert abs(ka2[8] - 0.08675467229138914) < EPSILON
+    assert abs(auc2 - 0.054521533910044662) < EPSILON
 
 
 def test_sinc_n_components():
@@ -79,7 +79,7 @@ def test_sinc_n_components():
     auc_gt = ka_gt.mean()
     assert abs(ka_gt[1] - 0.97858424670806643) < EPSILON
     assert abs(ka_gt[6] - 0.77621800324925161) < EPSILON
-    assert abs(auc_gt - 0.17085682801203947) < EPSILON
+    assert abs(auc_gt - 0.26515079212133352) < EPSILON
 
     n_components = 10
     ka_gv = kanalysis(X, Y_true, n_components=n_components, quantiles=QUANTILES)
@@ -97,5 +97,17 @@ def test_sinc_linear_kernel():
     assert abs(ka_gt[0] - 1) < EPSILON
     auc_gt = ka_gt.mean()
     assert abs(ka_gt[1] - 0.97911955529177741) < EPSILON
-    assert abs(ka_gt[6] - 0.96383727966426325) < EPSILON
-    assert abs(auc_gt - 0.50261621094107867) < EPSILON
+    assert abs(ka_gt[6] - 0.97911955529177741) < EPSILON
+    assert abs(auc_gt - 0.97932629236809443) < EPSILON
+
+
+def test_not_full_rank():
+    rng = np.random.RandomState(42)
+    rank = 4
+    X = rng.randn(100, rank)
+    K = np.dot(X, X.T)
+    Y = 2. * rng.randn(len(X)) - 1
+    gv = kanalysis_K(K, Y)
+    assert abs(gv[-1] - 0) > EPSILON
+    assert gv[rank] != gv[rank - 1]
+    assert gv[rank] == gv[rank + 1]

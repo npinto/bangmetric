@@ -1,6 +1,6 @@
 """Kernel Analysis of a Representation
 
-XXX: description missing
+XXX: full description missing
 
 
 License
@@ -54,7 +54,8 @@ DEFAULT_QUANTILES = [0.1, 0.5, 0.9]
 
 
 def kanalysis(X, Y_true, n_components='all', quantiles=DEFAULT_QUANTILES):
-    """Kernel Analysis of a representation `X` w.r.t. target values `Y_true`
+    """Kernel Analysis of a representation `X` w.r.t. target values
+    `Y_true`.
 
     Parameters
     ----------
@@ -193,8 +194,18 @@ def kanalysis_K(K, Y_true, n_components='all'):
     eigvals, eigvectors = eigh(K, eigvals=lo_hi)
     assert len(eigvals) == n_components
     assert np.isfinite(eigvectors).all()
+
+    # sort them
     eigvals_idx = (-np.abs(eigvals)).argsort()
+    eigvals = eigvals[eigvals_idx]
     eigvectors = eigvectors[:, eigvals_idx]
+
+    # keep the full eigen space but not more
+    # (this is important when K is *not* full rank)
+    var_explained = (eigvals ** 2.).cumsum() / (eigvals ** 2.).sum()
+    var_max_idx = var_explained.argmax()
+    eigvals = eigvals[:var_max_idx + 1]
+    eigvectors = eigvectors[:, :var_max_idx + 1]
 
     # ------------------------------------------------------------------------
     # -- Projection of labels on the leading kPCA components
@@ -221,11 +232,39 @@ def kanalysis_K(K, Y_true, n_components='all'):
     errors = (Y_pred - Y_center) ** 2.
 
     # -- Average errors == kernel analysis curve
-    ka = errors.reshape(len(errors), -1).mean(-1)
+    ka_tmp = errors.reshape(len(errors), -1).mean(-1)
+
+    # "fill in" the last value if K is not full rank
+    if len(ka_tmp) < n_components:
+        ka = np.ones(n_components) * ka_tmp[-1]
+        ka[:len(ka_tmp)] = ka_tmp
+    else:
+        ka = ka_tmp
 
     # -- Full kernel analysis curve
     ka0 = (Y_center ** 2.).mean()
-    ka = np.concatenate(([ka0], ka))
+    ka_full = np.concatenate(([ka0], ka))
 
-    assert np.isfinite(ka).all()
-    return ka
+    assert np.isfinite(ka_full).all()
+    return ka_full
+
+
+if __name__ == '__main__':
+    import numpy as np
+
+    print 'not full rank'
+    data = np.random.randn(100, 4).astype('f')
+    K = np.dot(data, data.T)
+    y = 2. * np.random.randn(len(data)) > 0 - 1
+    r = kanalysis_K(K, y)
+    #assert r[0] == 1.
+    assert r[4] == r[5]
+    print r
+
+    print 'full rank'
+    data = np.random.randn(100, 200).astype('f')
+    K = np.dot(data, data.T)
+    y = 2. * np.random.randn(len(data)) > 0 - 1
+    r = kanalysis_K(K, y)
+    print r
+
