@@ -1,3 +1,2 @@
 numpy>=1.6.1
 scikit-learn>=0.10
-nose>=1.1.2
