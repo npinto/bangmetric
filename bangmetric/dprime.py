@@ -21,8 +21,7 @@ def dprime(y_pred, y_true):
         Could be in {-1, +1} or {0, 1} or {False, True}.
 
     y_pred: array, shape = [n_samples]
-        Predicted values, interpreted as strictly positive or not
-        (i.e. converted to binary).
+        Predicted values (real).
 
     Returns
     -------
