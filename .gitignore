@@ -1,3 +1,4 @@
 *.egg*
 *.pyc
-_*
+__pycache__*
+.idea
