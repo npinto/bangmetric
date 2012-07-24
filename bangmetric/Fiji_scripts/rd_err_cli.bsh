@@ -1,0 +1,35 @@
+// Instructions for standalone (no python) execution:
+// (1) download Fiji from the web
+// (2) update Fiji once installed
+// (3) run this script with something like:
+//     /path/to/fiji-linux64 --headless /path/to/this_script.bsh true.tif pred.tif
+
+import trainableSegmentation.metrics.*;
+import ij.IJ;
+import ij.ImagePlus;
+
+if( bsh.args.length != 2)
+{
+    print("Error: wrong number of arguments!\n");
+    print("Usage: /path/to/fiji-linux64 --headless true.tif pred.tif");
+    return;
+}
+
+originalLabels = new ImagePlus(bsh.args[0]);
+proposedLabels = new ImagePlus(bsh.args[1]);
+
+calculateRandError = new Boolean(true);
+
+IJ.log("---");
+IJ.log("Evaluating segmentation...");
+IJ.log("  Original labels: " + originalLabels.getTitle());
+IJ.log("  Proposed labels: " + proposedLabels.getTitle() + "\n");
+
+// Calculate segmentation error with the selected metrics
+if( calculateRandError )
+{
+    IJ.log("\nCalculating maximal F-score of Rand index...");
+    metric = new RandError( originalLabels, proposedLabels );
+    maxFScore = metric.getRandIndexMaximalFScore( 0.0, 1.0, 0.05 );
+    IJ.log("  Minimum Rand error: " + (1.0 - maxFScore) );
+}
