@@ -34,6 +34,10 @@ WP_SCRIPT_PATH = path.abspath(path.join(base_path, "wp_err_cli.bsh"))
 ENV_VAR = "FIJI_EXE_PATH"
 DEFAULT_FIJI_EXE_PATH = "/path/to/fiji-linux64"
 
+# XXX: hacky but we need it for now...
+assert environ.get(ENV_VAR) is not None, \
+        "You need to define the environment variable '%s'" % ENV_VAR
+
 
 def pixel_error(y_true, y_pred):
     """XXX: docstring"""
