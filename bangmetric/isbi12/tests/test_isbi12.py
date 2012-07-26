@@ -1,11 +1,16 @@
 """Test suite for the ``Fiji_metrics`` module"""
 
-from os import environ
+from os import environ, path
+from scipy import misc
+from matplotlib.pyplot import matshow, show
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 import pytest
 
 from bangmetric.isbi12 import pixel_error, rand_error, warp_error
+from bangmetric.isbi12 import warp2d
+
+MYPATH = path.abspath(path.dirname(__file__)) 
 
 EPSILON = 1e-4
 
@@ -30,6 +35,7 @@ def test_no_environment_variable():
 
     environ["FIJI_EXE_PATH"] = backup
 
+
 @pytest.mark.skipif("environ.get('FIJI_EXE_PATH') is None")
 def test_simple_segmentation_with_provided_path():
 
@@ -50,3 +56,18 @@ def test_simple_segmentation_with_provided_path():
     assert np.abs(pe - 0.010183) < EPSILON
     assert np.abs(re - 0.020385) < EPSILON
     assert np.abs(we - 0.0) < EPSILON
+
+
+def test_simple_warp2d():
+
+    # -- read in y_pred and y_true from PNG images
+    y_pred = misc.imread(path.join(MYPATH, 'y_pred128.png'), flatten=True)
+    y_true = misc.imread(path.join(MYPATH, 'y_true128.png'), flatten=True)
+    gt = misc.imread(path.join(MYPATH, 'y_warp128.png'), flatten=True) > 0
+
+    # -- compute the "warped annotations"
+    gv = warp2d(y_true, y_pred)
+    print gv
+
+    assert (abs(gt - gv) < EPSILON).all()
+
