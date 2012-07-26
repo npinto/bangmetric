@@ -1,0 +1,24 @@
+import trainableSegmentation.metrics.*;
+import ij.IJ;
+import ij.ImagePlus;
+
+if(bsh.args.length != 5)
+{
+    print("Error: wrong number of arguments!\n");
+    print("Usage: /path/to/fiji-linux64 --headless <this_script.bsh> y_true.tif y_pred.tif y_out.tif threshold radius");
+    return;
+}
+
+y_true = new ImagePlus(bsh.args[0]);
+y_pred = new ImagePlus(bsh.args[1]);
+String y_out_fname = bsh.args[2];
+double threshold = Double.parseDouble(bsh.args[3]);
+int radius = Integer.parseInt(bsh.args[4]);
+
+metric = new WarpingError(y_true, y_pred);
+metric.setVerboseMode(false);
+
+WarpingResults wrs = metric.getWarpingResults(threshold, false, false, radius);
+ImagePlus y_out = wrs.warpedSource;
+
+IJ.save(y_out, y_out_fname);

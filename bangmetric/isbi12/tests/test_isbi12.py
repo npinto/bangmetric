@@ -1,11 +1,14 @@
 """Test suite for the ``Fiji_metrics`` module"""
 
 from os import environ
+from scipy import misc
+from matplotlib.pyplot import matshow, show
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 import pytest
 
 from bangmetric.isbi12 import pixel_error, rand_error, warp_error
+from bangmetric.isbi12 import warp_2d
 
 EPSILON = 1e-4
 
@@ -50,3 +53,18 @@ def test_simple_segmentation_with_provided_path():
     assert np.abs(pe - 0.010183) < EPSILON
     assert np.abs(re - 0.020385) < EPSILON
     assert np.abs(we - 0.0) < EPSILON
+
+
+def test_warp_2d():
+
+    # -- read in y_pred and y_true from PNG images
+    y_pred = misc.imread('./y_pred.png', flatten=True)
+    y_true = misc.imread('./y_true.png', flatten=True)
+
+    # -- compute the "warped annotations"
+    y_warp = warp_2d(y_true, y_pred)
+
+    matshow(y_pred)
+    matshow(y_true)
+    matshow(y_warp)
+    show()
