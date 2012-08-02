@@ -15,7 +15,7 @@ from numpy import linalg as la
 DTYPE = np.float64
 
 
-def pearson(y_true, y_pred):
+def pearson(y_true, y_pred, safe=True):
     """Computes the Pearson Correlation coefficient between the
     predicted values `y_pred` and ground truth values `y_true`.
 
@@ -26,6 +26,11 @@ def pearson(y_true, y_pred):
 
     y_pred: array, shape = [n_samples]
         Predicted values.
+
+    safe : bool, optional (default=True)
+        Flag if an exception should be raised when the norm of either
+        `y_true` or `y_pred` is zero. If False, then a pearson score of
+        0.0 will be returned.
 
     Returns
     -------
@@ -54,12 +59,20 @@ def pearson(y_true, y_pred):
     # -- actual computation
     y_true -= y_true.mean()
     y_true_norm = la.norm(y_true)
-    assert y_true_norm != 0
+    if y_true_norm == 0:
+        if safe:
+            return 0.0
+        else:
+            raise ValueError("The l2 norm of `y_true` is 0!")
     y_true /= y_true_norm
 
     y_pred -= y_pred.mean()
     y_pred_norm = la.norm(y_pred)
-    assert y_pred_norm != 0
+    if y_pred_norm == 0:
+        if safe:
+            return 0.0
+        else:
+            raise ValueError("The l2 norm of `y_pred` is 0!")
     y_pred /= y_pred_norm
 
     rho = np.dot(y_true, y_pred)
