@@ -218,12 +218,19 @@ def _parse_stdout(output, metric='pixel'):
         regex = r"  Minimum warping error: (\d+.\d+)"
 
     lines = output.split("\n")
+    assert len(lines) > 0
 
+    found = False
     for line in lines:
         match = re.match(regex, line)
         if match:
             # extract metric value
             metric_value = float(match.groups()[0])
+            found = True
+
+    if not found:
+        raise RuntimeError("Could not extract the metric value from stdout. "
+                           "Trace:\n" + '\n'.join(lines))
 
     return metric_value
 
