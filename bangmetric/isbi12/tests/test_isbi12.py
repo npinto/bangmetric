@@ -33,6 +33,7 @@ def test_no_environment_variable():
 
     environ["FIJI_EXE_PATH"] = backup
 
+
 @pytest.mark.skipif("environ.get('FIJI_EXE_PATH') is None")
 def test_simple_segmentation_with_provided_path():
 
@@ -53,6 +54,24 @@ def test_simple_segmentation_with_provided_path():
     assert np.abs(pe - 0.010183) < EPSILON
     assert np.abs(re - 0.020385) < EPSILON
     assert np.abs(we - 0.0) < EPSILON
+
+
+@pytest.mark.skipif("environ.get('FIJI_EXE_PATH') is None")
+def test_simple_unique_rand_value():
+
+    # -- creating a fake y_prediction
+    y_pred = np.eye(32).astype('f')
+    y_pred = gaussian_filter(y_pred, 2.)
+    y_pred -= y_pred.min()
+    y_pred /= y_pred.max()
+    y_pred = 1. - y_pred
+
+    # -- creating a fake ground truth
+    y_true = 1 - np.eye(32).astype(np.uint8)
+
+    re = rand_error(y_true, y_pred, th_min=0.6, th_max=0.7)
+
+    assert np.abs(re - 0.13515) < EPSILON
 
 
 def test_warp_2d():

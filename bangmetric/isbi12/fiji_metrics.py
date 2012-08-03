@@ -36,33 +36,42 @@ ENV_VAR = "FIJI_EXE_PATH"
 DEFAULT_FIJI_EXE_PATH = "/path/to/fiji-linux64"
 
 
-def pixel_error(y_true, y_pred):
+def pixel_error(y_true, y_pred, th_min=0., th_max=0.9, th_inc=0.1):
     """XXX: docstring"""
 
     out = _metrics(y_true, y_pred,
                    pixel_error=True,
                    rand_error=False,
-                   warping_error=False)
+                   warping_error=False,
+                   th_min=th_min,
+                   th_max=th_max,
+                   th_inc=th_inc)
     return out['pixel_error']
 
 
-def rand_error(y_true, y_pred):
+def rand_error(y_true, y_pred, th_min=0., th_max=0.9, th_inc=0.1):
     """XXX: docstring"""
 
     out = _metrics(y_true, y_pred,
                    pixel_error=False,
                    rand_error=True,
-                   warping_error=False)
+                   warping_error=False,
+                   th_min=th_min,
+                   th_max=th_max,
+                   th_inc=th_inc)
     return out['rand_error']
 
 
-def warp_error(y_true, y_pred):
+def warp_error(y_true, y_pred, th_min=0., th_max=0.9, th_inc=0.1):
     """XXX: docstring"""
 
     out = _metrics(y_true, y_pred,
                    pixel_error=False,
                    rand_error=False,
-                   warping_error=True)
+                   warping_error=True,
+                   th_min=th_min,
+                   th_max=th_max,
+                   th_inc=th_inc)
     return out['warping_error']
 
 
@@ -97,7 +106,10 @@ def warp_2d(y_true, y_pred, y_out_fname='y_out.tif', thr=0., radius=20):
 def _metrics(y_true, y_pred,
              pixel_error=True,
              rand_error=True,
-             warping_error=True):
+             warping_error=True,
+             th_min=0.,
+             th_max=0.9,
+             th_inc=0.1):
     """
     Computes the metrics from the ISBI challenge, using Fiji.
 
@@ -119,6 +131,15 @@ def _metrics(y_true, y_pred,
     `warping_error`: bool
         whether or not to compute the Warping Error as defined in ISBI
 
+    `th_min`: float
+        minimum threshold for the threshold sweep
+
+    `th_max`: float
+        maximum threshold for the threshold sweep
+
+    `th_inc`: float
+        threshold increment for the threshold sweep
+
     Returns
     -------
 
@@ -126,11 +147,12 @@ def _metrics(y_true, y_pred,
         as computed by Fiji. Dictionnary keys are 'pixel_error',
         'rand_error' and 'warping_error'
 
-    Note
-    ----
-
-    In the ISBI challenge, the "positive"
     """
+
+    assert 0. <= th_min and th_min <= 1.
+    assert 0. <= th_max and th_max <= 1.
+    assert 0. <= th_inc and th_inc <= 1.
+    assert th_min <= th_max
 
     # -- special cases
     if not pixel_error and \
@@ -147,8 +169,9 @@ def _metrics(y_true, y_pred,
 
         script = PX_SCRIPT_PATH
 
-        cmdline = "%s %s %s %s %s" % (program, '--headless', script,
-                                      true_tmp_file, pred_tmp_file)
+        cmdline = "%s %s %s %s %s %s %s %s" % (program, '--headless', script,
+                                               true_tmp_file, pred_tmp_file,
+                                               th_min, th_max, th_inc)
 
         return_code, stdout, stderr = _call_capture_output(cmdline)
 
@@ -165,8 +188,9 @@ def _metrics(y_true, y_pred,
 
         script = RD_SCRIPT_PATH
 
-        cmdline = "%s %s %s %s %s" % (program, '--headless', script,
-                                      true_tmp_file, pred_tmp_file)
+        cmdline = "%s %s %s %s %s %s %s %s" % (program, '--headless', script,
+                                               true_tmp_file, pred_tmp_file,
+                                               th_min, th_max, th_inc)
 
         return_code, stdout, stderr = _call_capture_output(cmdline)
 
@@ -183,8 +207,9 @@ def _metrics(y_true, y_pred,
 
         script = WP_SCRIPT_PATH
 
-        cmdline = "%s %s %s %s %s" % (program, '--headless', script,
-                                      true_tmp_file, pred_tmp_file)
+        cmdline = "%s %s %s %s %s %s %s %s" % (program, '--headless', script,
+                                               true_tmp_file, pred_tmp_file,
+                                               th_min, th_max, th_inc)
 
         return_code, stdout, stderr = _call_capture_output(cmdline)
 

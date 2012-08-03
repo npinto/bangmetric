@@ -8,15 +8,18 @@ import trainableSegmentation.metrics.*;
 import ij.IJ;
 import ij.ImagePlus;
 
-if( bsh.args.length != 2)
+if( bsh.args.length != 5)
 {
     print("Error: wrong number of arguments!\n");
-    print("Usage: /path/to/fiji-linux64 --headless true.tif pred.tif");
+    print("Usage: /path/to/fiji-linux64 --headless true.tif pred.tif th_min th_max th_inc");
     return;
 }
 
 originalLabels = new ImagePlus(bsh.args[0]);
 proposedLabels = new ImagePlus(bsh.args[1]);
+th_min = Float.valueOf(bsh.args[2]).floatValue();
+th_max = Float.valueOf(bsh.args[3]).floatValue();
+th_inc = Float.valueOf(bsh.args[4]).floatValue();
 
 calculateWarpingError = new Boolean(true);
 
@@ -30,7 +33,7 @@ if( calculateWarpingError )
 {
     IJ.log("\nCalculating warping error by minimizing splits and mergers...");
     metric = new WarpingError( originalLabels, proposedLabels );
-    warpingError = metric.getMinimumSplitsAndMergersErrorValue( 0.0, 0.9, 0.1, false, 20 );
+    warpingError = metric.getMinimumSplitsAndMergersErrorValue( th_min, th_max, th_inc, false, 20 );
     IJ.log("  Minimum warping error: " + warpingError);
     IJ.log("  # errors (splits + mergers pixels) = " + Math.round(warpingError * originalLabels.getWidth() * originalLabels.getHeight() * originalLabels.getImageStackSize() ) );
 }
