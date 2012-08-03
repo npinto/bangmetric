@@ -120,6 +120,9 @@ def kanalysis(X, Y_true, n_components='all', quantiles=DEFAULT_QUANTILES):
         gamma = 1. / l2_squared_sorted[quantile_idx]
         K = np.exp(-gamma * l2_squared)
 
+        if not np.isfinite(K).all():
+            continue
+
         Z = kanalysis_K(K, Y_true, n_components=n_components)
 
         curves += [Z]

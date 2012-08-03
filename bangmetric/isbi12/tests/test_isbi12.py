@@ -1,14 +1,15 @@
 """Test suite for the ``Fiji_metrics`` module"""
 
-from os import environ
+from os import environ, path
 from scipy import misc
-from matplotlib.pyplot import matshow, show
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 import pytest
 
 from bangmetric.isbi12 import pixel_error, rand_error, warp_error
-from bangmetric.isbi12 import warp_2d
+from bangmetric.isbi12 import warp2d
+
+MYPATH = path.abspath(path.dirname(__file__))
 
 EPSILON = 1e-4
 
@@ -74,16 +75,15 @@ def test_simple_unique_rand_value():
     assert np.abs(re - 0.13515) < EPSILON
 
 
-def test_warp_2d():
+def test_simple_warp2d():
 
     # -- read in y_pred and y_true from PNG images
-    y_pred = misc.imread('./y_pred.png', flatten=True)
-    y_true = misc.imread('./y_true.png', flatten=True)
+    y_pred = misc.imread(path.join(MYPATH, 'y_pred128.png'), flatten=True)
+    y_true = misc.imread(path.join(MYPATH, 'y_true128.png'), flatten=True)
+    gt = misc.imread(path.join(MYPATH, 'y_warp128.png'), flatten=True) > 0
 
     # -- compute the "warped annotations"
-    y_warp = warp_2d(y_true, y_pred)
+    gv = warp2d(y_true, y_pred)
+    print gv
 
-    matshow(y_pred)
-    matshow(y_true)
-    matshow(y_warp)
-    show()
+    assert (abs(gt - gv) < EPSILON).all()

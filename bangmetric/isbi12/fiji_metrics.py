@@ -75,23 +75,26 @@ def warp_error(y_true, y_pred, th_min=0., th_max=0.9, th_inc=0.1):
     return out['warping_error']
 
 
-def warp_2d(y_true, y_pred, y_out_fname='y_out.tif', thr=0., radius=20):
+def warp2d(y_true, y_pred, threshold=0.0, radius=20):
+    """XXX: docstring"""
 
     program, true_tmp_file, pred_tmp_file, tmpdir = \
             _prepare_arrays(y_true, y_pred)
 
     script = WARP_CODE_PATH
 
-    y_out_fname_full_path = path.join(tmpdir, y_out_fname)
+    y_out_fname = path.join(tmpdir, 'out.tif')
 
-    cmdline = "%s %s %s %s %s %s %s %s" % (program, '--headless', script,
-            true_tmp_file, pred_tmp_file,
-            y_out_fname_full_path, thr, radius)
+    cmdline = ("%s %s %s %s %s %s %s %s" % (
+        program, '--headless', script,
+        true_tmp_file, pred_tmp_file,
+        y_out_fname, threshold, radius
+    ))
 
     return_code, stdout, stderr = _call_capture_output(cmdline)
 
     if return_code == 0:
-        y_out = io.imread(y_out_fname_full_path, as_grey=True, plugin='freeimage')
+        y_out = io.imread(y_out_fname, as_grey=True, plugin='freeimage')
         y_out = (y_out > 0)
     else:
         print 'An error occured while executing command :'
