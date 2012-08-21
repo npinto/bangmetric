@@ -6,8 +6,8 @@ import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 import pytest
 
-from bangmetric.isbi12 import pixel_error, rand_error, warp_error
-from bangmetric.isbi12 import warp2d
+from bangmetric.wildwest.isbi12 import pixel_error, rand_error, warp_error
+from bangmetric.wildwest.isbi12 import warp2d
 
 MYPATH = path.abspath(path.dirname(__file__))
 
