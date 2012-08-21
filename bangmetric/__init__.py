@@ -5,3 +5,5 @@ from correlation import *  # pyflakes.ignore
 from rmse import *  # pyflakes.ignore
 from kernel_analysis import *  # pyflakes.ignore
 from nk import *  # pyflakes.ignore
+
+import wildwest
