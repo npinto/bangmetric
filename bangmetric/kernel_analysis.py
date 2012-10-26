@@ -106,7 +106,7 @@ def kanalysis(X, Y_true, n_components='all', quantiles=DEFAULT_QUANTILES):
 
     # Sort them
     l2_squared_sorted = l2_squared.ravel()
-    np.sort(l2_squared_sorted)
+    l2_squared_sorted.sort()
 
     # ------------------------------------------------------------------------
     # -- Compute Kernel Analysis for each quantile
